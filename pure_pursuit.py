@@ -26,7 +26,7 @@ def main():
     xarr = [ T_path_from_robot.x ]
     yarr = [ T_path_from_robot.y ]
 
-    alpha = 100 # m
+    alpha = 2.0 # m
     linear_vel = 1.0 # m/s
     ktheta = 1.0 # 1/s
 
