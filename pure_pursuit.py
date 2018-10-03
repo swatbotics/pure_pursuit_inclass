@@ -15,29 +15,49 @@ def move_robot(T_orig, linear_vel, angular_vel, dt):
     return Transform2D(x_new, y_new, theta_new)
 
 
+
 def main():
     
-    T_world_from_robot = Transform2D(0, 0, 0)
+    T_path_from_robot = Transform2D(0, -3.0, 0.25)
 
-    linear_vel = 0.3 # m/s
-    angular_vel = 0.5 # rad/s
-    
+
     dt = 0.1 # s
 
-    xarr = [ T_world_from_robot.x ]
-    yarr = [ T_world_from_robot.y ]
+    xarr = [ T_path_from_robot.x ]
+    yarr = [ T_path_from_robot.y ]
+
+    alpha = 100 # m
+    linear_vel = 1.0 # m/s
+    ktheta = 1.0 # rad/s
 
     for i in range(100):
+
+        # implement pure pursuit
+        # get pd in the path frame
+        xp = T_path_from_robot.x
+        yp = T_path_from_robot.y
+
+        pd_path = np.array([ xp + alpha, 0 ])
         
-        T_world_from_robot = move_robot(T_world_from_robot,
-                                        linear_vel, angular_vel, dt)
+        # get pd in the robot frame
+        pd_robot = T_path_from_robot.transform_inv(pd_path)
         
-        xarr.append( T_world_from_robot.x )
-        yarr.append( T_world_from_robot.y )
+        # steer towards pd
+        theta_err = np.arctan2(pd_robot[1], pd_robot[0])
+
+        angular_vel = ktheta * theta_err
+
+        T_path_from_robot = move_robot(T_path_from_robot,
+                                       linear_vel, angular_vel, dt)
+
+        xarr.append( T_path_from_robot.x )
+        yarr.append( T_path_from_robot.y )
+    
 
     plt.plot(xarr, yarr)
     plt.axis('equal')
     plt.show()
+    
 
 if __name__ == '__main__':
     main()
