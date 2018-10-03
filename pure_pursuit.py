@@ -28,7 +28,7 @@ def main():
 
     alpha = 100 # m
     linear_vel = 1.0 # m/s
-    ktheta = 1.0 # rad/s
+    ktheta = 1.0 # 1/s
 
     for i in range(100):
 
